@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"wechatbot/config"
 )
 
@@ -78,9 +79,20 @@ func Completions(msg string) (string, error) {
 	}
 
 	apiKey := config.LoadConfig().ApiKey
+	proxy := config.LoadConfig().Proxy
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+apiKey)
-	client := &http.Client{}
+	var client *http.Client
+	if len(proxy) == 0 {
+		client = &http.Client{}
+	} else {
+		proxyAddr, _ := url.Parse(proxy)
+		client = &http.Client{
+			Transport: &http.Transport{
+				Proxy: http.ProxyURL(proxyAddr),
+			},
+		}
+	}
 	response, err := client.Do(req)
 	if err != nil {
 		return "", err
