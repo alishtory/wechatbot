@@ -4,6 +4,7 @@ import (
 	"github.com/eatmoreapple/openwechat"
 	"log"
 	"strings"
+	"wechatbot/config"
 	"wechatbot/gtp"
 )
 
@@ -26,11 +27,29 @@ func NewUserMessageHandler() MessageHandlerInterface {
 	return &UserMessageHandler{}
 }
 
+func shouldReply(id string) bool {
+	for _, number := range config.LoadConfig().ReplyUids {
+		if id == number {
+			return true
+		}
+	}
+	return false
+}
+
 // ReplyText 发送文本消息到群
 func (g *UserMessageHandler) ReplyText(msg *openwechat.Message) error {
 	// 接收私聊消息
 	sender, err := msg.Sender()
 	log.Printf("Received User %v Text Msg : %v", sender.NickName, msg.Content)
+
+	if msg.Content == "uid" {
+		msg.ReplyText(sender.AvatarID())
+		return nil
+	}
+
+	if !shouldReply(sender.AvatarID()) {
+		return nil
+	}
 
 	// 向GPT发起请求
 	requestText := strings.TrimSpace(msg.Content)
@@ -38,7 +57,7 @@ func (g *UserMessageHandler) ReplyText(msg *openwechat.Message) error {
 	reply, err := gtp.Completions(requestText)
 	if err != nil {
 		log.Printf("gtp request error: %v \n", err)
-		msg.ReplyText("机器人神了，我一会发现了就去修。")
+		msg.ReplyText(config.RandErrorReplay())
 		return err
 	}
 	if reply == "" {

@@ -3,8 +3,10 @@ package config
 import (
 	"encoding/json"
 	"log"
+	"math/rand"
 	"os"
 	"sync"
+	"time"
 )
 
 // Configuration 项目配置
@@ -17,6 +19,12 @@ type Configuration struct {
 	Proxy string `json:"proxy"`
 	// gpt 版本
 	GptModel string `json:"gpt_model"`
+	// 用户回复白名单
+	ReplyUids []string `json:"reply_uids"`
+	// 打招呼语句
+	Greet string `json:"greet"`
+	// 出错语句
+	ErrorReply []string `json:"error_reply"`
 }
 
 var config *Configuration
@@ -55,4 +63,10 @@ func LoadConfig() *Configuration {
 		}
 	})
 	return config
+}
+
+func RandErrorReplay() string {
+	rand.Seed(time.Now().UnixNano())
+	errorReply := LoadConfig().ErrorReply
+	return errorReply[rand.Intn(len(errorReply))]
 }
