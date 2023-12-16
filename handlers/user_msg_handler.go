@@ -45,6 +45,8 @@ func (g *UserMessageHandler) ReplyText(msg *openwechat.Message) error {
 	if msg.Content == "uid" {
 		msg.ReplyText(sender.AvatarID())
 		return nil
+	} else if gtp.NewIntentAnalyzer().SendGroupAddMsg(msg) {
+		return nil
 	}
 
 	if !shouldReply(sender.AvatarID()) {

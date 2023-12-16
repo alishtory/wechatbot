@@ -4,6 +4,7 @@ import (
 	"github.com/eatmoreapple/openwechat"
 	"log"
 	"wechatbot/config"
+	"wechatbot/gtp"
 )
 
 // MessageHandlerInterface 消息处理接口
@@ -43,6 +44,9 @@ func Handler(msg *openwechat.Message) {
 			_, err := msg.Agree(config.LoadConfig().Greet)
 			if err != nil {
 				log.Fatalf("add friend agree error : %v", err)
+				return
+			}
+			if gtp.NewIntentAnalyzer().SendGroupAddMsg(msg) {
 				return
 			}
 		}
