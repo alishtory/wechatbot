@@ -46,7 +46,7 @@ func Handler(msg *openwechat.Message) {
 				log.Fatalf("add friend agree error : %v", err)
 				return
 			}
-			if gtp.NewIntentAnalyzer().SendGroupAddMsg(msg) {
+			if gtp.NewIntentAnalyzer().FriendAddSendGroupAddMsg(msg) {
 				return
 			}
 		}
