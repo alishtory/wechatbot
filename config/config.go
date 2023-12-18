@@ -24,7 +24,7 @@ type Configuration struct {
 	// 打招呼语句
 	Greet string `json:"greet"`
 	// 群ID
-	GroupId string `json:"group_id"`
+	GroupNickName string `json:"group_nick_name"`
 	// 入群意图正则
 	GroupIntentPattern string `json:"group_intent_pattern"`
 	// 出错语句

@@ -46,7 +46,7 @@ func (analyzer *IntentAnalyzer) FriendAddSendGroupAddMsg(msg *openwechat.Message
 		log.Fatalf("get Groups error : %v", err)
 		return false
 	}
-	searchGroups := groups.SearchByID(config.LoadConfig().GroupId)
+	searchGroups := groups.SearchByNickName(1, config.LoadConfig().GroupNickName)
 	if g := searchGroups.First(); g != nil {
 		friends, err := self.Friends()
 		if err != nil {
@@ -60,7 +60,7 @@ func (analyzer *IntentAnalyzer) FriendAddSendGroupAddMsg(msg *openwechat.Message
 			return true
 		}
 	} else {
-		log.Fatalf("can not find group: %v", config.LoadConfig().GroupId)
+		log.Fatalf("can not find group: %v", config.LoadConfig().GroupNickName)
 	}
 	return false
 }
@@ -85,7 +85,7 @@ func (analyzer *IntentAnalyzer) SendGroupAddMsg(msg *openwechat.Message) bool {
 		log.Fatalf("get Groups error : %v", err)
 		return false
 	}
-	searchGroups := groups.SearchByID(config.LoadConfig().GroupId)
+	searchGroups := groups.SearchByNickName(1, config.LoadConfig().GroupNickName)
 	if g := searchGroups.First(); g != nil {
 		friend, _ := sender.AsFriend()
 		if err := g.AddFriendsIn(friend); err != nil {
@@ -94,7 +94,7 @@ func (analyzer *IntentAnalyzer) SendGroupAddMsg(msg *openwechat.Message) bool {
 			return true
 		}
 	} else {
-		log.Fatalf("can not find group: %v", config.LoadConfig().GroupId)
+		log.Fatalf("can not find group: %v", config.LoadConfig().GroupNickName)
 	}
 	return false
 }
