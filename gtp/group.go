@@ -5,6 +5,7 @@ import (
 	"log"
 	"regexp"
 	"sync"
+	"wechatbot/config"
 )
 
 // IntentAnalyzer 是用户意图分析的工具类
@@ -22,7 +23,7 @@ var (
 func NewIntentAnalyzer() *IntentAnalyzer {
 	once.Do(func() {
 		instance = &IntentAnalyzer{
-			pattern: regexp.MustCompile(`[加进入拉].*群|新西兰|交流`),
+			pattern: regexp.MustCompile(config.LoadConfig().GroupIntentPattern),
 		}
 	})
 	return instance
@@ -45,7 +46,7 @@ func (analyzer *IntentAnalyzer) FriendAddSendGroupAddMsg(msg *openwechat.Message
 		log.Fatalf("get Groups error : %v", err)
 		return false
 	}
-	searchGroups := groups.SearchByUserName(1, "@@64ba28a6970a9a72e86658178a60ecfceaf40ca3b76659642ad4103f3a76e382")
+	searchGroups := groups.SearchByID(config.LoadConfig().GroupId)
 	if g := searchGroups.First(); g != nil {
 		friends, err := self.Friends()
 		if err != nil {
@@ -58,6 +59,8 @@ func (analyzer *IntentAnalyzer) FriendAddSendGroupAddMsg(msg *openwechat.Message
 		} else {
 			return true
 		}
+	} else {
+		log.Fatalf("can not find group: %v", config.LoadConfig().GroupId)
 	}
 	return false
 }
@@ -82,7 +85,7 @@ func (analyzer *IntentAnalyzer) SendGroupAddMsg(msg *openwechat.Message) bool {
 		log.Fatalf("get Groups error : %v", err)
 		return false
 	}
-	searchGroups := groups.SearchByUserName(1, "@@64ba28a6970a9a72e86658178a60ecfceaf40ca3b76659642ad4103f3a76e382")
+	searchGroups := groups.SearchByID(config.LoadConfig().GroupId)
 	if g := searchGroups.First(); g != nil {
 		friend, _ := sender.AsFriend()
 		if err := g.AddFriendsIn(friend); err != nil {
@@ -90,6 +93,8 @@ func (analyzer *IntentAnalyzer) SendGroupAddMsg(msg *openwechat.Message) bool {
 		} else {
 			return true
 		}
+	} else {
+		log.Fatalf("can not find group: %v", config.LoadConfig().GroupId)
 	}
 	return false
 }

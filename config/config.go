@@ -23,6 +23,10 @@ type Configuration struct {
 	ReplyUids []string `json:"reply_uids"`
 	// 打招呼语句
 	Greet string `json:"greet"`
+	// 群ID
+	GroupId string `json:"group_id"`
+	// 入群意图正则
+	GroupIntentPattern string `json:"group_intent_pattern"`
 	// 出错语句
 	ErrorReply []string `json:"error_reply"`
 }
